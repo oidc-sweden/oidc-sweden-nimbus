@@ -1,4 +1,4 @@
-![Logo](docs/img/sweden-connect-logo.png)
+![Logo](https://www.oidc.se/img/oidc-logo.png)
 
 # oidc-sweden-nimbus
 
