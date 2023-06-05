@@ -48,8 +48,11 @@ public class ClaimConstants {
    * <ul>
    * <li>{@code confirmed} - The identity of the holder is fully confirmed.</li>
    * <li>{@code probable} - The identity of the holder is probable, but not fully confirmed.</li>
-   * <li>{@code uncertain} - The identity of the holder is uncertain.</li></li> The {@code coordinationNumberLevel}
-   * claim may be used to represent this level when a coordination number is released.
+   * <li>{@code uncertain} - The identity of the holder is uncertain.</li>
+   * </ul>
+   * <p>
+   * The {@code coordinationNumberLevel} claim may be used to represent this level when a coordination number is released.
+   * </p>
    * <p>
    * <b>Type:</b> String holding any of the three values listed above.
    * </p>

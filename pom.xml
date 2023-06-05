@@ -7,7 +7,7 @@
   <groupId>se.oidc.nimbus</groupId>
   <artifactId>oidc-sweden-nimbus</artifactId>
   <packaging>jar</packaging>
-  <version>0.9.0-SNAPSHOT</version>
+  <version>0.9.0</version>
 
   <name>OIDC Sweden :: Nimbus SDK extensions</name>
   <description>Nimbus SDK extension library for OIDC Sweden</description>
@@ -46,6 +46,8 @@
     <java.version>17</java.version>
 
     <slf4j.version>1.7.36</slf4j.version>
+    <nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
+    <oauth2-oidc-sdk.version>10.9.1</oauth2-oidc-sdk.version>
   </properties>
   
   <repositories>
@@ -95,13 +97,13 @@
       <dependency>
         <groupId>com.nimbusds</groupId>
         <artifactId>nimbus-jose-jwt</artifactId>
-        <version>9.31</version>
+        <version>${nimbus-jose-jwt.version}</version>
       </dependency>
       
       <dependency>
         <groupId>com.nimbusds</groupId>
         <artifactId>oauth2-oidc-sdk</artifactId>
-        <version>10.9.1</version>
+        <version>${oauth2-oidc-sdk.version}</version>
       </dependency>      
           
     </dependencies>
@@ -262,8 +264,8 @@
           <doctitle>Nimbus extensions for OIDC Sweden - ${project.version}</doctitle>
           <windowtitle>Nimbus extensions for OIDC Sweden - ${project.version}</windowtitle>             
           <links>
-            <link>https://javadoc.io/doc/com.nimbusds/nimbus-jose-jwt/latest/</link>
-            <link>https://javadoc.io/doc/com.nimbusds/oauth2-oidc-sdk/latest/</link>
+            <link>https://javadoc.io/doc/com.nimbusds/nimbus-jose-jwt/${nimbus-jose-jwt.version}</link>
+            <link>https://javadoc.io/doc/com.nimbusds/oauth2-oidc-sdk/${oauth2-oidc-sdk.version}</link>
           </links>
           <detectJavaApiLink>true</detectJavaApiLink>
         </configuration>
