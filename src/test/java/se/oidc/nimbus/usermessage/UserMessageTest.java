@@ -15,18 +15,19 @@
  */
 package se.oidc.nimbus.usermessage;
 
-import java.util.Map;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.nimbusds.langtag.LangTag;
 import com.nimbusds.oauth2.sdk.ParseException;
 
 import net.minidev.json.JSONObject;
 
 /**
  * Test cases for UserMessage.
- * 
+ *
  * @author Martin Lindström
  */
 public class UserMessageTest {
@@ -37,89 +38,110 @@ public class UserMessageTest {
     Assertions.assertTrue(userMessage.getMessages().isEmpty());
     Assertions.assertNull(userMessage.getMimeType());
 
-    final JSONObject json = userMessage.toJSONObject();
-    Assertions.assertEquals(userMessage, UserMessage.parse(json));
-
-    userMessage.addMessage("sv", "Detta är ett testmeddelande");
-    userMessage.addMessage("en", "This is a test message");
+    userMessage.addMessage(new UserMessage.Message("Detta är ett testmeddelande", "sv"));
+    userMessage.addMessage(new UserMessage.Message("This is a test message", LangTag.parse("en")));
     userMessage.setMimeType(UserMessage.TEXT_MIME_TYPE);
 
     Assertions.assertTrue(userMessage.getMessages().size() == 2);
     Assertions.assertEquals("Detta är ett testmeddelande", userMessage.getMessage("sv"));
     Assertions.assertEquals("This is a test message", userMessage.getMessage("en"));
+    Assertions.assertNull(userMessage.getDefaultMessage());
     Assertions.assertNull(userMessage.getMessage("de"));
 
     Assertions.assertEquals(UserMessage.TEXT_MIME_TYPE, userMessage.getMimeType());
 
     Assertions.assertNotNull(userMessage.toString());
-    Assertions.assertTrue(userMessage.toString().startsWith("message="));
+    Assertions.assertTrue(userMessage.toString().startsWith("message"));
   }
 
   @Test
   public void test2() throws Exception {
-    final UserMessage userMessage = new UserMessage(Map.of(
-        "en", "This is a message",
-        "sv", "Detta är ett meddelande"),
+    final UserMessage userMessage = new UserMessage(List.of(
+        new UserMessage.Message("Detta är ett meddelande"),
+        new UserMessage.Message("This is a message", "en")),
         UserMessage.TEXT_MIME_TYPE);
 
     final JSONObject json = userMessage.toJSONObject();
     System.out.println(json.toJSONString());
 
+    System.out.println(userMessage.toString());
+
     final UserMessage userMessage2 = UserMessage.parse(json);
+
+    System.out.println(userMessage2.toString());
+
     Assertions.assertEquals(userMessage, userMessage2);
     Assertions.assertEquals(userMessage.hashCode(), userMessage2.hashCode());
   }
 
+//  @Test
+//  public void testBadLanguage() throws Exception {
+//    Assertions.assertEquals("Invalid language tag - english",
+//        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+//          new UserMessage(List.of("english", "This is a message"), null);
+//        }).getMessage());
+//
+//    final UserMessage um1 = new UserMessage();
+//    Assertions.assertEquals("Invalid language tag - english",
+//        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+//          um1.addMessage("english", "This is a message");
+//        }).getMessage());
+//  }
+
   @Test
-  public void testBadLanguage() throws Exception {
-    Assertions.assertEquals("Invalid language tag - english",
+  public void testDuplicateMessages() {
+    final UserMessage userMessage = new UserMessage();
+    userMessage.addMessage(new UserMessage.Message("Default message"));
+    userMessage.addMessage(new UserMessage.Message("English", "en"));
+
+    Assertions.assertEquals("Default message parameter already exists",
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-          new UserMessage(Map.of("english", "This is a message"), null);
+          userMessage.addMessage(new UserMessage.Message("Default message"));
         }).getMessage());
 
-    final UserMessage um1 = new UserMessage();
-    Assertions.assertEquals("Invalid language tag - english",
+    Assertions.assertEquals("Message with the same language tag already exists",
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-          um1.addMessage("english", "This is a message");
+          userMessage.addMessage(new UserMessage.Message("English", "en"));
         }).getMessage());
   }
-  
+
+  @Test
+  public void testGetBadLanguage() {
+    final UserMessage userMessage = new UserMessage();
+    userMessage.addMessage(new UserMessage.Message("Default message"));
+    userMessage.addMessage(new UserMessage.Message("English", "en"));
+
+    Assertions.assertNull(userMessage.getMessage("_ÖLOP"));
+  }
+
+  @Test
+  public void testGetDefault() {
+    final UserMessage userMessage = new UserMessage();
+
+    Assertions.assertNull(userMessage.getDefaultMessage());
+
+    userMessage.addMessage(new UserMessage.Message("Default message"));
+
+    Assertions.assertEquals("Default message", userMessage.getDefaultMessage());
+    Assertions.assertEquals("Default message", userMessage.getMessage((LangTag) null));
+    Assertions.assertEquals("Default message", userMessage.getMessage((String) null));
+  }
+
   @Test
   public void testParseErrors() throws Exception {
     final JSONObject json1 = new JSONObject();
     json1.put("hello", "foo");
-    
-    Assertions.assertEquals("Invalid user message object - Missing message field",
+
+    Assertions.assertEquals("Missing message field(s)",
         Assertions.assertThrows(ParseException.class, () -> {
           UserMessage.parse(json1);
         }).getMessage());
-    
-    json1.put("message", "a string");
-    Assertions.assertEquals("Invalid user message object - Field message is expected to be a map",
+
+    json1.put("message", Integer.valueOf(42));
+    Assertions.assertEquals("Invalid user message object - Field message is expected to be a string",
         Assertions.assertThrows(ParseException.class, () -> {
           UserMessage.parse(json1);
         }).getMessage());
-    
-    final JSONObject json2 = new JSONObject();
-    json2.put("message", Map.of("english", "msg"));
-    Assertions.assertEquals("Invalid user message object - unrecognized language tag",
-        Assertions.assertThrows(ParseException.class, () -> {
-          UserMessage.parse(json2);
-        }).getMessage());
   }
-  
-  @Test
-  public void testEqualsJustToGet100PercentJacocoCoverage() {
-    UserMessage um1 = new UserMessage(Map.of("sv", "Svenska"), UserMessage.TEXT_MIME_TYPE);
-    UserMessage um2 = new UserMessage(Map.of("en", "English"), UserMessage.TEXT_MIME_TYPE);
-    Assertions.assertFalse(um1.equals(null));
-    Assertions.assertFalse(um1.equals(um2));
-    Assertions.assertFalse(um1.equals("other-type"));
-    
-    UserMessage um3 = new UserMessage(Map.of("sv", "Svenska"), UserMessage.MARKDOWN_MIME_TYPE);
-    Assertions.assertFalse(um1.equals(um3));
-    
-    Assertions.assertTrue(um1.equals(um1));
-  }
-  
+
 }

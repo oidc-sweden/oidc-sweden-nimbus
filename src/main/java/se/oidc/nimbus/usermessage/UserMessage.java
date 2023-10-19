@@ -15,8 +15,9 @@
  */
 package se.oidc.nimbus.usermessage;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -44,8 +45,11 @@ public class UserMessage {
   /** Symbolic constant for the {@code text/markdown} MIME type. */
   public static final String MARKDOWN_MIME_TYPE = "text/markdown";
 
-  /** A map of language tags and messages. */
-  private final Map<String, String> messages = new HashMap<>();
+  /** Symbolic constant for the message parameter. */
+  public static final String MESSAGE_PARAMETER_NAME = "message";
+
+  /** A list messages. */
+  private final List<Message> messages;
 
   /** The MIME type. */
   private String mimeType;
@@ -54,6 +58,7 @@ public class UserMessage {
    * Default constructor.
    */
   public UserMessage() {
+    this.messages = new ArrayList<>();
   }
 
   /**
@@ -62,43 +67,53 @@ public class UserMessage {
    * @param messages the message(s)
    * @param mimeType the MIME type (may be {@code null})
    */
-  public UserMessage(final Map<String, String> messages, final String mimeType) {
+  public UserMessage(final List<Message> messages, final String mimeType) {
+    this();
     Objects.requireNonNull(messages, "messages must not be null");
-    for (final Map.Entry<String, String> entry : messages.entrySet()) {
-      try {
-        LangTag.parse(entry.getKey());
-      }
-      catch (final LangTagException e) {
-        throw new IllegalArgumentException("Invalid language tag - " + entry.getKey(), e);
-      }
-      this.messages.put(entry.getKey(), entry.getValue());
-    }
+    messages.forEach(m -> this.addMessage(m));
     this.mimeType = mimeType;
   }
 
   /**
    * Adds a message.
    *
-   * @param langTag the language tag
    * @param message the message
    */
-  public void addMessage(final String langTag, final String message) {
-    try {
-      LangTag.parse(Objects.requireNonNull(langTag, "langTag must not be null"));
-      this.messages.put(langTag, Objects.requireNonNull(message, "message must not be null"));
+  public void addMessage(final Message message) {
+    if (message.getLanguage() == null) {
+      if (this.messages.stream().anyMatch(m -> m.getLanguage() == null)) {
+        throw new IllegalArgumentException("Default message parameter already exists");
+      }
+      this.messages.add(0, message);
     }
-    catch (final LangTagException e) {
-      throw new IllegalArgumentException("Invalid language tag - " + langTag, e);
+    else {
+      if (this.messages.stream().anyMatch(m -> m.matches(message.getLanguage()))) {
+        throw new IllegalArgumentException("Message with the same language tag already exists");
+      }
+      this.messages.add(message);
     }
   }
 
   /**
-   * Gets a {@link Map} of all messages.
+   * Gets a {@link List} of all messages.
    *
-   * @return a {@link Map} of all messages
+   * @return a {@link List} of all messages
    */
-  public Map<String, String> getMessages() {
-    return Collections.unmodifiableMap(this.messages);
+  public List<Message> getMessages() {
+    return Collections.unmodifiableList(this.messages);
+  }
+
+  /**
+   * Gets the "default" message, i.e., the message parameter with no language tag.
+   *
+   * @return the message or {@code null} if no message parameter without language tag exists
+   */
+  public String getDefaultMessage() {
+    return this.messages.stream()
+        .filter(m -> m.getLanguage() == null)
+        .map(Message::getMessage)
+        .findFirst()
+        .orElse(null);
   }
 
   /**
@@ -108,7 +123,32 @@ public class UserMessage {
    * @return the message, or {@code null} if not available
    */
   public String getMessage(final String langTag) {
-    return this.messages.get(langTag);
+    if (langTag == null) {
+      return this.getDefaultMessage();
+    }
+    try {
+      return this.getMessage(LangTag.parse(langTag));
+    }
+    catch (final LangTagException e) {
+      return null;
+    }
+  }
+
+  /**
+   * Gets the message for the supplied language.
+   *
+   * @param langTag the language tag
+   * @return the message, or {@code null} if not available
+   */
+  public String getMessage(final LangTag langTag) {
+    if (langTag == null) {
+      return this.getDefaultMessage();
+    }
+    return this.messages.stream()
+        .filter(m -> m.matches(langTag))
+        .map(Message::getMessage)
+        .findFirst()
+        .orElse(null);
   }
 
   /**
@@ -136,7 +176,17 @@ public class UserMessage {
    */
   public JSONObject toJSONObject() {
     final JSONObject o = new JSONObject();
-    o.put("message", this.messages);
+
+    final String defaultMessage = this.getDefaultMessage();
+    if (defaultMessage != null) {
+      o.put(MESSAGE_PARAMETER_NAME, defaultMessage);
+    }
+    for (final Message msg : this.messages) {
+      if (msg.getLanguage() == null) {
+        continue;
+      }
+      o.put(MESSAGE_PARAMETER_NAME + "#" + msg.getLanguage().toString(), msg.getMessage());
+    }
     if (this.mimeType != null) {
       o.put("mime_type", this.mimeType);
     }
@@ -152,25 +202,33 @@ public class UserMessage {
    */
   public static UserMessage parse(final JSONObject jsonObject) throws ParseException {
 
-    final Object messageObject = jsonObject.get("message");
-    if (messageObject == null) {
-      throw new ParseException("Invalid user message object - Missing message field");
-    }
-    if (!Map.class.isInstance(messageObject)) {
-      throw new ParseException("Invalid user message object - Field message is expected to be a map");
-    }
     final UserMessage userMessage = new UserMessage();
-    for (final var entry : Map.class.cast(messageObject).entrySet()) {
-      @SuppressWarnings("unchecked")
-      final Map.Entry<String, String> e = (Map.Entry<String, String>) entry;
-      try {
-        LangTag.parse(e.getKey());
-        userMessage.addMessage(e.getKey(), e.getValue());
+
+    try {
+      final Object defaultMessage = jsonObject.get(MESSAGE_PARAMETER_NAME);
+      if (defaultMessage != null) {
+        if (!String.class.isInstance(defaultMessage)) {
+          throw new ParseException("Invalid user message object - Field message is expected to be a string");
+        }
+        userMessage.addMessage(Message.parse(MESSAGE_PARAMETER_NAME, (String) defaultMessage));
       }
-      catch (final LangTagException te) {
-        throw new ParseException("Invalid user message object - unrecognized language tag", te);
+      for (final Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+        if (entry.getKey().startsWith(MESSAGE_PARAMETER_NAME + "#")) {
+          if (!String.class.isInstance(entry.getValue())) {
+            throw new ParseException(
+                "Invalid user message object - Field %s is expected to be a string".formatted(entry.getKey()));
+          }
+          userMessage.addMessage(Message.parse(entry.getKey(), (String) entry.getValue()));
+        }
+      }
+      if (userMessage.getMessages().isEmpty()) {
+        throw new ParseException("Missing %s field(s)".formatted(MESSAGE_PARAMETER_NAME));
       }
     }
+    catch (LangTagException | IllegalArgumentException e) {
+      throw new ParseException(e.getMessage(), e);
+    }
+
     final String mimeType = jsonObject.getAsString("mime_type");
     if (mimeType != null) {
       userMessage.setMimeType(mimeType);
@@ -182,7 +240,7 @@ public class UserMessage {
   /** {@inheritDoc} */
   @Override
   public int hashCode() {
-    return Objects.hash(this.messages, this.mimeType);
+    return Objects.hash(this.toString());
   }
 
   /** {@inheritDoc} */
@@ -195,13 +253,152 @@ public class UserMessage {
       return false;
     }
     final UserMessage other = (UserMessage) obj;
-    return Objects.equals(this.messages, other.messages) && Objects.equals(this.mimeType, other.mimeType);
+    return Objects.equals(this.toString(), other.toString());
   }
 
   /** {@inheritDoc} */
   @Override
   public String toString() {
-    return "message=" + this.messages + ", mime_type=" + this.mimeType;
+    final StringBuffer sb = new StringBuffer();
+    for (final Message m : this.messages) {
+      if (!sb.isEmpty()) {
+        sb.append(", ");
+      }
+      if (m.getLanguage() == null) {
+        sb.append(MESSAGE_PARAMETER_NAME);
+      }
+      else {
+        sb.append(MESSAGE_PARAMETER_NAME).append('#').append(m.getLanguage().toString());
+      }
+      sb.append("=").append(m.getMessage());
+    }
+    sb.append(", mime_type=").append(this.mimeType != null ? this.mimeType : "not-set");
+    return sb.toString();
+  }
+
+  /**
+   * Representation of the message parameter.
+   *
+   * @author Martin Lindström
+   */
+  public static class Message {
+
+    /** The message contents. */
+    private final String message;
+
+    /** The language tag (optional). */
+    private final LangTag langTag;
+
+    /**
+     * Constructor setting up a message without a language tag.
+     *
+     * @param message the message
+     */
+    public Message(final String message) {
+      this(message, (LangTag) null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param message the message contents
+     * @param langTag the language tag
+     */
+    public Message(final String message, final LangTag langTag) {
+      this.message = message;
+      this.langTag = langTag;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param message the message contents
+     * @param langTag the language tag
+     */
+    public Message(final String message, final String langTag) {
+      this.message = message;
+      try {
+        this.langTag = langTag != null ? LangTag.parse(langTag) : null;
+      }
+      catch (final LangTagException e) {
+        throw new IllegalArgumentException("Invalid language tag", e);
+      }
+    }
+
+    /**
+     * Gets the message contents.
+     *
+     * @return the message contents
+     */
+    public String getMessage() {
+      return this.message;
+    }
+
+    /**
+     * Gets the language tag.
+     *
+     * @return the language tag or {@code null}
+     */
+    public LangTag getLanguage() {
+      return this.langTag;
+    }
+
+    /**
+     * Whether the supplied language tag matches the language tag of the message.
+     *
+     * @param langTag the language tag
+     * @return {@code true} if there is a match and {@code false} otherwise
+     */
+    public boolean matches(final String langTag) {
+      try {
+        return this.langTag != null ? this.matches(LangTag.parse(langTag)) : false;
+      }
+      catch (final LangTagException e) {
+        return false;
+      }
+    }
+
+    /**
+     * Whether the supplied language tag matches the language tag of the message.
+     *
+     * @param langTag the language tag
+     * @return {@code true} if there is a match and {@code false} otherwise
+     */
+    public boolean matches(final LangTag langTag) {
+      if (this.langTag == null) {
+        return false;
+      }
+      if (!Objects.equals(this.langTag.getPrimaryLanguage(), langTag.getPrimaryLanguage())) {
+        return false;
+      }
+      if (this.langTag.getRegion() != null && langTag.getRegion() != null) {
+        if (!Objects.equals(this.langTag.getRegion(), langTag.getRegion())) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    /**
+     * Parses the parameter name ({@code message} or {@code message#tag}) and value into a {@link Message} object.
+     *
+     * @param parameterName the parameter name
+     * @param message the message contents
+     * @return a {@link Message} object
+     * @throws LangTagException if there is an invalid language tag
+     */
+    public static Message parse(final String parameterName, final String message) throws LangTagException {
+      if (MESSAGE_PARAMETER_NAME.equals(parameterName)) {
+        return new Message(message);
+      }
+
+      if (!parameterName.startsWith(MESSAGE_PARAMETER_NAME + "#")) {
+        return null;
+      }
+      final String langTag = parameterName.substring(MESSAGE_PARAMETER_NAME.length() + 1);
+      return new Message(message, LangTag.parse(langTag));
+    }
+
   }
 
 }
