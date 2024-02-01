@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 OIDC Sweden
+ * Copyright 2023-2024 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,6 @@ import se.oidc.nimbus.usermessage.UserMessage;
  * @author Martin Lindström
  */
 public class SignRequest {
-
-  /** The parameter name. */
-  public static final String PARAMETER_NAME = "https://id.oidc.se/param/signRequest";
 
   /**
    * The data to be signed as a Base64-encoded string.
@@ -83,7 +80,7 @@ public class SignRequest {
 
   /**
    * Gets the string contents of the TBS data.
-   * 
+   *
    * @return the byte contents of the TBS data
    */
   public byte[] getTbsDataContents() {
@@ -125,14 +122,14 @@ public class SignRequest {
     if (tbsData == null) {
       throw new ParseException("Missing required field tbs_data");
     }
-    // Ensure that it is valid Base64 ...    
+    // Ensure that it is valid Base64 ...
     try {
       java.util.Base64.getDecoder().decode(tbsData);
     }
     catch (final Exception e) {
       throw new ParseException("tbs_data does not contain a valid Base64 string", e);
     }
-    
+
     final Object signMessageObject = jsonObject.get("sign_message");
     if (signMessageObject == null) {
       throw new ParseException("Missing required field sign_message");

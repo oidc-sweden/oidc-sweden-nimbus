@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 OIDC Sweden
+ * Copyright 2023-2024 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for {@link LibraryVersion}.
- * 
+ *
  * @author Martin Lindström
  */
 public class LibraryVersionTest {
