@@ -17,14 +17,14 @@ package se.oidc.nimbus;
 
 /**
  * Internal class used for serialization across library classes.
- * 
+ *
  * @author Martin Lindström
  */
 public final class LibraryVersion {
 
   private static final int MAJOR = 0;
   private static final int MINOR = 9;
-  private static final int PATCH = 0;
+  private static final int PATCH = 1;
 
   /**
    * Global serialization value for classes.
@@ -33,13 +33,13 @@ public final class LibraryVersion {
 
   /**
    * Gets the version string.
-   * 
+   *
    * @return the version string
    */
   public static String getVersion() {
     return MAJOR + "." + MINOR + "." + PATCH;
   }
 
-  private LibraryVersion() {    
+  private LibraryVersion() {
   }
 }
