@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 OIDC Sweden
+ * Copyright 2023-2024 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,9 +35,6 @@ import net.minidev.json.JSONObject;
  * @author Martin Lindström
  */
 public class UserMessage {
-
-  /** The parameter name. */
-  public static final String PARAMETER_NAME = "https://id.oidc.se/param/userMessage";
 
   /** Symbolic constant for the {@code text/plain} MIME type. */
   public static final String TEXT_MIME_TYPE = "text/plain";

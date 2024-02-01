@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 OIDC Sweden
+ * Copyright 2023-2024 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package se.oidc.nimbus.claims;
 
 /**
  * Representation of the claims defined within the OIDC Sweden specifications.
- * 
+ *
  * @author Martin Lindström
  */
 public class ClaimConstants {
@@ -59,7 +59,7 @@ public class ClaimConstants {
    */
   public static final String COORDINATION_NUMBER_LEVEL_CLAIM_NAME =
       OIDC_SWEDEN_CLAIMS_PREFIX + "coordinationNumberLevel";
-  
+
   /**
    * All individuals born in Sweden or moving to Sweden with the intention of staying one year or longer will be
    * assigned a personal identity number ("personnummer") and registered in the population register. Prior to being
@@ -187,41 +187,5 @@ public class ClaimConstants {
    * </p>
    */
   public static final String AUTHENTICATION_PROVIDER_CLAIM_NAME = OIDC_SWEDEN_CLAIMS_PREFIX + "authnProvider";
-
-  /**
-   * OpenID Core defines the address claim containing a country field, but there are many other areas where a country
-   * needs to be represented other than in the context of an individual's address. The
-   * {@code https://id.oidc.se/claim/country} claim is a general purpose claim that can be used to represent a country.
-   * <p>
-   * <b>Type:</b> String. ISO 3166-1 alpha-2 two letter country code.
-   * </p>
-   */
-  public static final String COUNTRY_CLAIM_NAME = OIDC_SWEDEN_CLAIMS_PREFIX + "country";
-
-  /**
-   * Claims that corresponds to the {@code name} claim defined in OpenID Core but is the full name at the time of birth
-   * for the subject.
-   * <p>
-   * <b>Type:</b> String.
-   * </p>
-   */
-  public static final String BIRTH_NAME_CLAIM_NAME = OIDC_SWEDEN_CLAIMS_PREFIX + "birthName";
-
-  /**
-   * Claim representing the place of birth for the subject. The OIDC Sweden specifications does not define "place".
-   * Depending on the context it may be "City" or "City, Country" or any other representation.
-   * <p>
-   * <b>Type:</b> String.
-   * </p>
-   */
-  public static final String PLACE_OF_BIRTH_CLAIM_NAME = OIDC_SWEDEN_CLAIMS_PREFIX + "placeOfbirth";
-  
-  /**
-   * Claim representing the age (in years) of the subject person.
-   * <p>
-   * <b>Type:</b> Integer.
-   * </p>
-   */
-  public static final String AGE_CLAIM_NAME = OIDC_SWEDEN_CLAIMS_PREFIX + "age";
 
 }
