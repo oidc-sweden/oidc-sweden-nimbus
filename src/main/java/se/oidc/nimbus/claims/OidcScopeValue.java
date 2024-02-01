@@ -159,9 +159,7 @@ public class OidcScopeValue extends Scope.Value {
   public static record ClaimRequirement(String name, boolean essential,
       boolean defaultIdTokenDelivery, boolean defaultUserInfoDelivery) {
 
-    public ClaimRequirement
-
-    {
+    public ClaimRequirement {
       if (!defaultIdTokenDelivery && !defaultUserInfoDelivery) {
         throw new IllegalArgumentException("At least one default delivery option must be set");
       }
@@ -184,7 +182,7 @@ public class OidcScopeValue extends Scope.Value {
      * @param essential whether the claim is essential
      * @param defaultIdTokenDelivery whether to deliver in ID Token by default
      * @param defaultUserInfoDelivery whether to deliver from UserInfo endpoint by default
-     * @return
+     * @return a {@link ClaimRequirement}
      */
     public static ClaimRequirement of(final String name, final boolean essential,
         final boolean defaultIdTokenDelivery, final boolean defaultUserInfoDelivery) {
