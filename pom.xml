@@ -7,7 +7,7 @@
   <groupId>se.oidc.nimbus</groupId>
   <artifactId>oidc-sweden-nimbus</artifactId>
   <packaging>jar</packaging>
-  <version>0.9.1-SNAPSHOT</version>
+  <version>0.9.1</version>
 
   <name>OIDC Sweden :: Nimbus SDK extensions</name>
   <description>Nimbus SDK extension library for OIDC Sweden</description>
@@ -45,9 +45,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>17</java.version>
 
-    <slf4j.version>1.7.36</slf4j.version>
-    <nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
-    <oauth2-oidc-sdk.version>10.9.1</oauth2-oidc-sdk.version>
+    <slf4j.version>2.0.11</slf4j.version>
+    <nimbus-jose-jwt.version>9.37.3</nimbus-jose-jwt.version>
+    <oauth2-oidc-sdk.version>11.9.1</oauth2-oidc-sdk.version>
   </properties>
   
   <repositories>
@@ -84,7 +84,7 @@
       <dependency>
         <groupId>org.apache.santuario</groupId>
         <artifactId>xmlsec</artifactId>
-        <version>2.3.3</version>
+        <version>3.0.3</version>
         <exclusions>
           <!-- Version included has reported vulnerabilities -->
           <exclusion>
