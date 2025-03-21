@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 OIDC Sweden
+ * Copyright 2023-2025 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,16 @@
  */
 package se.oidc.nimbus.usermessage;
 
+import com.nimbusds.langtag.LangTag;
+import com.nimbusds.langtag.LangTagException;
+import com.nimbusds.oauth2.sdk.ParseException;
+import net.minidev.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import com.nimbusds.langtag.LangTag;
-import com.nimbusds.langtag.LangTagException;
-import com.nimbusds.oauth2.sdk.ParseException;
-
-import net.minidev.json.JSONObject;
 
 /**
  * Representation of the Client Provided User Message request parameter as defined in section 2.1 of
@@ -67,7 +66,7 @@ public class UserMessage {
   public UserMessage(final List<Message> messages, final String mimeType) {
     this();
     Objects.requireNonNull(messages, "messages must not be null");
-    messages.forEach(m -> this.addMessage(m));
+    messages.forEach(this::addMessage);
     this.mimeType = mimeType;
   }
 
@@ -204,14 +203,14 @@ public class UserMessage {
     try {
       final Object defaultMessage = jsonObject.get(MESSAGE_PARAMETER_NAME);
       if (defaultMessage != null) {
-        if (!String.class.isInstance(defaultMessage)) {
+        if (!(defaultMessage instanceof String)) {
           throw new ParseException("Invalid user message object - Field message is expected to be a string");
         }
         userMessage.addMessage(Message.parse(MESSAGE_PARAMETER_NAME, (String) defaultMessage));
       }
       for (final Map.Entry<String, Object> entry : jsonObject.entrySet()) {
         if (entry.getKey().startsWith(MESSAGE_PARAMETER_NAME + "#")) {
-          if (!String.class.isInstance(entry.getValue())) {
+          if (!(entry.getValue() instanceof String)) {
             throw new ParseException(
                 "Invalid user message object - Field %s is expected to be a string".formatted(entry.getKey()));
           }
@@ -222,7 +221,7 @@ public class UserMessage {
         throw new ParseException("Missing %s field(s)".formatted(MESSAGE_PARAMETER_NAME));
       }
     }
-    catch (LangTagException | IllegalArgumentException e) {
+    catch (final LangTagException | IllegalArgumentException e) {
       throw new ParseException(e.getMessage(), e);
     }
 
@@ -256,7 +255,7 @@ public class UserMessage {
   /** {@inheritDoc} */
   @Override
   public String toString() {
-    final StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     for (final Message m : this.messages) {
       if (!sb.isEmpty()) {
         sb.append(", ");
@@ -348,7 +347,7 @@ public class UserMessage {
      */
     public boolean matches(final String langTag) {
       try {
-        return this.langTag != null ? this.matches(LangTag.parse(langTag)) : false;
+        return this.langTag != null && this.matches(LangTag.parse(langTag));
       }
       catch (final LangTagException e) {
         return false;
@@ -369,9 +368,7 @@ public class UserMessage {
         return false;
       }
       if (this.langTag.getRegion() != null && langTag.getRegion() != null) {
-        if (!Objects.equals(this.langTag.getRegion(), langTag.getRegion())) {
-          return false;
-        }
+        return Objects.equals(this.langTag.getRegion(), langTag.getRegion());
       }
       return true;
     }

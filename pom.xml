@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>se.oidc.nimbus</groupId>
   <artifactId>oidc-sweden-nimbus</artifactId>
   <packaging>jar</packaging>
-  <version>0.9.1</version>
+  <version>0.9.2</version>
 
   <name>OIDC Sweden :: Nimbus SDK extensions</name>
   <description>Nimbus SDK extension library for OIDC Sweden</description>
@@ -16,7 +16,7 @@
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -24,7 +24,7 @@
   <scm>
     <connection>scm:https://github.com/oidc-sweden/oidc-sweden-nimbus.git</connection>
     <developerConnection>scm:https://github.com/oidc-sweden/oidc-sweden-nimbus.git</developerConnection>
-    <url>https://github.com/oidc-sweden/oidc-sweden-nimbus/tree/master</url>
+    <url>https://github.com/oidc-sweden/oidc-sweden-nimbus/tree/main</url>
   </scm>
 
   <developers>
@@ -32,7 +32,7 @@
       <name>Martin Lindström</name>
       <email>martin@idsec.se</email>
       <organization>IDsec Solutions AB</organization>
-      <organizationUrl>https://www.idsec.se</organizationUrl>      
+      <organizationUrl>https://www.idsec.se</organizationUrl>
     </developer>
   </developers>
 
@@ -45,22 +45,23 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>17</java.version>
 
-    <slf4j.version>2.0.11</slf4j.version>
-    <nimbus-jose-jwt.version>9.37.3</nimbus-jose-jwt.version>
-    <oauth2-oidc-sdk.version>11.9.1</oauth2-oidc-sdk.version>
+    <slf4j.version>2.0.17</slf4j.version>
+    <nimbus-jose-jwt.version>10.0.2</nimbus-jose-jwt.version>
+    <oauth2-oidc-sdk.version>11.23.1</oauth2-oidc-sdk.version>
   </properties>
-  
+
   <repositories>
     <repository>
       <id>central</id>
       <name>Maven Central</name>
       <url>https://repo1.maven.org/maven2/</url>
     </repository>
-  </repositories>  
-  
+  </repositories>
+
+  <!--
   <distributionManagement>
     <snapshotRepository>
-      <id>ossrh</id> 
+      <id>ossrh</id>
       <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
     <repository>
@@ -68,11 +69,12 @@
     <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
-  
+  -->
+
   <dependencyManagement>
-  
+
     <dependencies>
-    
+
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
@@ -80,87 +82,80 @@
         <type>jar</type>
         <scope>compile</scope>
       </dependency>
-            
+
       <dependency>
         <groupId>org.apache.santuario</groupId>
         <artifactId>xmlsec</artifactId>
-        <version>3.0.3</version>
-        <exclusions>
-          <!-- Version included has reported vulnerabilities -->
-          <exclusion>
-            <groupId>com.fasterxml.woodstox</groupId>
-            <artifactId>woodstox-core</artifactId>
-          </exclusion>
-        </exclusions>
+        <version>3.0.5</version>
       </dependency>
-      
+
       <dependency>
         <groupId>com.nimbusds</groupId>
         <artifactId>nimbus-jose-jwt</artifactId>
         <version>${nimbus-jose-jwt.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>com.nimbusds</groupId>
         <artifactId>oauth2-oidc-sdk</artifactId>
         <version>${oauth2-oidc-sdk.version}</version>
-      </dependency>      
-          
+      </dependency>
+
     </dependencies>
-  
+
   </dependencyManagement>
-    
+
   <dependencies>
-    
+
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>oauth2-oidc-sdk</artifactId>
     </dependency>
-  
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-        
+
     <!-- For testing -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.9.2</version>
+      <version>5.12.1</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.3.1</version>
+      <version>5.16.1</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
-      <version>5.3.1</version>
+      <version>5.16.1</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
       <version>${slf4j.version}</version>
       <type>jar</type>
       <scope>test</scope>
-    </dependency>    
+    </dependency>
 
   </dependencies>
 
   <build>
-    
+
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>
@@ -172,68 +167,67 @@
       <testResource>
         <directory>src/test/resources</directory>
         <filtering>false</filtering>
-      </testResource>      
-    </testResources>    
+      </testResource>
+    </testResources>
 
     <plugins>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>3.13.0</version>
         <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
+          <release>${java.version}</release>
         </configuration>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.4.2</version>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.4.1</version>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.5.2</version>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.9</version>      
+        <version>3.7.0</version>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.0.0-M3</version>
+        <version>3.5.0</version>
         <executions>
           <execution>
             <id>enforce</id>
             <configuration>
               <rules>
-                <dependencyConvergence />
+                <dependencyConvergence/>
               </rules>
             </configuration>
             <goals>
               <goal>enforce</goal>
             </goals>
           </execution>
-        </executions>        
+        </executions>
       </plugin>
-      
+
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.8</version>
+        <version>0.8.12</version>
         <configuration>
           <excludes>
             <!-- Ignore coverage for exception classes -->
@@ -254,22 +248,22 @@
             </goals>
           </execution>
         </executions>
-      </plugin>      
-      
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.2.0</version>
-        <configuration>           
+        <version>3.10.1</version>
+        <configuration>
           <doctitle>Nimbus extensions for OIDC Sweden - ${project.version}</doctitle>
-          <windowtitle>Nimbus extensions for OIDC Sweden - ${project.version}</windowtitle>             
+          <windowtitle>Nimbus extensions for OIDC Sweden - ${project.version}</windowtitle>
           <links>
             <link>https://javadoc.io/doc/com.nimbusds/nimbus-jose-jwt/${nimbus-jose-jwt.version}</link>
             <link>https://javadoc.io/doc/com.nimbusds/oauth2-oidc-sdk/${oauth2-oidc-sdk.version}</link>
           </links>
           <detectJavaApiLink>true</detectJavaApiLink>
         </configuration>
-      </plugin>      
+      </plugin>
 
     </plugins>
 
@@ -279,34 +273,26 @@
 
     <profile>
       <id>release</id>
-      
+
       <!-- See http://central.sonatype.org/pages/apache-maven.html for setup -->
-      
+
       <build>
         <plugins>
-        
+
           <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.13</version>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.7.0</version>
             <extensions>true</extensions>
             <configuration>
-              <serverId>ossrh</serverId>
-              <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-              <autoReleaseAfterClose>false</autoReleaseAfterClose>
-              <!--
-                Allows manual inspection of the staging repo before deploying
-                it to the central repo.
-                Use 'mvn nexus-staging:release -Prelease' to release and
-                'mvn nexus-staging:drop' to abort. 
-               -->
+              <publishingServerId>central</publishingServerId>
             </configuration>
-          </plugin>        
-        
+          </plugin>
+
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>3.0.1</version>
+            <version>3.2.6</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
@@ -321,7 +307,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
-            <version>3.2.0</version>
+            <version>3.3.1</version>
             <executions>
               <execution>
                 <id>attach-sources</id>
@@ -334,10 +320,10 @@
                 <goals>
                   <goal>test-jar-no-fork</goal>
                 </goals>
-              </execution>              
+              </execution>
             </executions>
           </plugin>
-          
+
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>

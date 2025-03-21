@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 OIDC Sweden
+ * Copyright 2023-2025 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package se.oidc.nimbus;
 
-import java.util.Properties;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
 
 /**
  * Test cases for {@link LibraryVersion}.
@@ -35,19 +35,21 @@ public class LibraryVersionTest {
 
     this.version = properties.getProperty("nimbus.addons.version");
     if (this.version.endsWith("-SNAPSHOT")) {
-      this.version = this.version.substring(0, version.length() - 9);
+      this.version = this.version.substring(0, this.version.length() - 9);
     }
   }
 
   @Test
   public void testUid() {
-    Assertions.assertEquals(this.version.hashCode(), LibraryVersion.SERIAL_VERSION_UID);
+    final String[] parts = this.version.split("\\.");
+    final String majorAndMinor = parts[0] + "." + parts[1];
+    Assertions.assertEquals(majorAndMinor.hashCode(), LibraryVersion.SERIAL_VERSION_UID);
   }
 
   @Test
   public void testVersion() throws Exception {
     Assertions.assertEquals(this.version, LibraryVersion.getVersion(),
-        "Expected LibraryVersion.getVersion() to return " + version);
+        "Expected LibraryVersion.getVersion() to return " + this.version);
   }
 
 }

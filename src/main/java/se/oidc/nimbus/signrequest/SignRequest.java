@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 OIDC Sweden
+ * Copyright 2023-2025 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,13 @@
  */
 package se.oidc.nimbus.signrequest;
 
-import java.util.Map;
-import java.util.Objects;
-
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.oauth2.sdk.ParseException;
-
 import net.minidev.json.JSONObject;
 import se.oidc.nimbus.usermessage.UserMessage;
+
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Representation of the Signature Request Parameter as defined in section 3.1 of
@@ -39,7 +38,7 @@ public class SignRequest {
   private final Base64 tbsData;
 
   /**
-   * A sign message is the human readable text snippet that is displayed to the user as part of the signature process.
+   * A sign message is the human-readable text snippet that is displayed to the user as part of the signature process.
    * The sign_message field is a JSON object according to the https://id.oidc.se/param/userMessage request parameter as
    * defined in section 2.1 of
    * <a href="https://www.oidc.se/specifications/request-parameter-extensions.html">Authentication Request Parameter
@@ -115,7 +114,6 @@ public class SignRequest {
    * @return a {@link SignRequest} object
    * @throws ParseException for parsing errors
    */
-  @SuppressWarnings("unchecked")
   public static SignRequest parse(final JSONObject jsonObject) throws ParseException {
 
     final String tbsData = jsonObject.getAsString("tbs_data");
@@ -135,10 +133,10 @@ public class SignRequest {
       throw new ParseException("Missing required field sign_message");
     }
     final UserMessage userMessage;
-    if (JSONObject.class.isInstance(signMessageObject)) {
+    if (signMessageObject instanceof JSONObject) {
       userMessage = UserMessage.parse((JSONObject) signMessageObject);
     }
-    else if (Map.class.isInstance(signMessageObject)) {
+    else if (signMessageObject instanceof Map) {
       userMessage = UserMessage.parse(new JSONObject((Map<String, ?>) signMessageObject));
     }
     else {

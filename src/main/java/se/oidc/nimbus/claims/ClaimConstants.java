@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 OIDC Sweden
+ * Copyright 2023-2025 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public class ClaimConstants {
   public static final String OIDC_SWEDEN_CLAIMS_PREFIX = "https://id.oidc.se/claim/";
 
   /**
-   * Swedish civic registration number (”personnummer”) according to
+   * Swedish civic registration number ("personnummer") according to
    * <a href="https://docs.swedenconnect.se/technical-framework/mirror/skv/skv704-8.pdf">SKV 704</a>.
    * <p>
    * <b>Type:</b> String where the format is 12 digits without hyphen.
@@ -35,7 +35,7 @@ public class ClaimConstants {
   public static final String PERSONAL_IDENTITY_NUMBER_CLAIM_NAME = OIDC_SWEDEN_CLAIMS_PREFIX + "personalIdentityNumber";
 
   /**
-   * Swedish coordination number (”samordningsnummer”).
+   * Swedish coordination number ("samordningsnummer").
    * <p>
    * <b>Type:</b> String where the format is 12 digits without hyphen.
    * </p>
