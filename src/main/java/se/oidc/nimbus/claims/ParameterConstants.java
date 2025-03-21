@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 OIDC Sweden
+ * Copyright 2023-2025 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,8 +76,7 @@ public class ParameterConstants {
       OIDC_SWEDEN_DISCO_PREFIX + "originalClientIdSupported";
 
   /**
-   * A token containing information about the the client that requested authentication from a proxy authentication
-   * service.
+   * A token containing information about the client that requested authentication from a proxy authentication service.
    */
   public static final String ORIGINAL_CLIENT_TOKEN_PARAM_NAME = OIDC_SWEDEN_PARAM_PREFIX + "originalClientToken";
 

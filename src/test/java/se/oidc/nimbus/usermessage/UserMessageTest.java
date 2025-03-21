@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 OIDC Sweden
+ * Copyright 2023-2025 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,13 @@
  */
 package se.oidc.nimbus.usermessage;
 
-import java.util.List;
-
+import com.nimbusds.langtag.LangTag;
+import com.nimbusds.oauth2.sdk.ParseException;
+import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.nimbusds.langtag.LangTag;
-import com.nimbusds.oauth2.sdk.ParseException;
-
-import net.minidev.json.JSONObject;
+import java.util.List;
 
 /**
  * Test cases for UserMessage.
@@ -64,29 +62,15 @@ public class UserMessageTest {
     final JSONObject json = userMessage.toJSONObject();
     System.out.println(json.toJSONString());
 
-    System.out.println(userMessage.toString());
+    System.out.println(userMessage);
 
     final UserMessage userMessage2 = UserMessage.parse(json);
 
-    System.out.println(userMessage2.toString());
+    System.out.println(userMessage2);
 
     Assertions.assertEquals(userMessage, userMessage2);
     Assertions.assertEquals(userMessage.hashCode(), userMessage2.hashCode());
   }
-
-//  @Test
-//  public void testBadLanguage() throws Exception {
-//    Assertions.assertEquals("Invalid language tag - english",
-//        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-//          new UserMessage(List.of("english", "This is a message"), null);
-//        }).getMessage());
-//
-//    final UserMessage um1 = new UserMessage();
-//    Assertions.assertEquals("Invalid language tag - english",
-//        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-//          um1.addMessage("english", "This is a message");
-//        }).getMessage());
-//  }
 
   @Test
   public void testDuplicateMessages() {
@@ -95,14 +79,12 @@ public class UserMessageTest {
     userMessage.addMessage(new UserMessage.Message("English", "en"));
 
     Assertions.assertEquals("Default message parameter already exists",
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-          userMessage.addMessage(new UserMessage.Message("Default message"));
-        }).getMessage());
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> userMessage.addMessage(new UserMessage.Message("Default message"))).getMessage());
 
     Assertions.assertEquals("Message with the same language tag already exists",
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-          userMessage.addMessage(new UserMessage.Message("English", "en"));
-        }).getMessage());
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> userMessage.addMessage(new UserMessage.Message("English", "en"))).getMessage());
   }
 
   @Test
@@ -128,20 +110,16 @@ public class UserMessageTest {
   }
 
   @Test
-  public void testParseErrors() throws Exception {
+  public void testParseErrors() {
     final JSONObject json1 = new JSONObject();
     json1.put("hello", "foo");
 
     Assertions.assertEquals("Missing message field(s)",
-        Assertions.assertThrows(ParseException.class, () -> {
-          UserMessage.parse(json1);
-        }).getMessage());
+        Assertions.assertThrows(ParseException.class, () -> UserMessage.parse(json1)).getMessage());
 
-    json1.put("message", Integer.valueOf(42));
+    json1.put("message", 42);
     Assertions.assertEquals("Invalid user message object - Field message is expected to be a string",
-        Assertions.assertThrows(ParseException.class, () -> {
-          UserMessage.parse(json1);
-        }).getMessage());
+        Assertions.assertThrows(ParseException.class, () -> UserMessage.parse(json1)).getMessage());
   }
 
 }

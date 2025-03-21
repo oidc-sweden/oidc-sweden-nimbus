@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 OIDC Sweden
+ * Copyright 2023-2025 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,16 @@
  */
 package se.oidc.nimbus.claims;
 
+import com.nimbusds.oauth2.sdk.Scope;
+import com.nimbusds.openid.connect.sdk.OIDCScopeValue;
+import se.oidc.nimbus.LibraryVersion;
+
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.nimbusds.oauth2.sdk.Scope;
-import com.nimbusds.openid.connect.sdk.OIDCScopeValue;
-
-import se.oidc.nimbus.LibraryVersion;
 
 /**
  * Representation of an OpenID Connect scope value.
@@ -37,6 +37,7 @@ import se.oidc.nimbus.LibraryVersion;
  */
 public class OidcScopeValue extends Scope.Value {
 
+  @Serial
   private static final long serialVersionUID = LibraryVersion.SERIAL_VERSION_UID;
 
   /**
@@ -118,8 +119,8 @@ public class OidcScopeValue extends Scope.Value {
   }
 
   /**
-   * Creates a new OpenID Connect scope value. The requirement is set to {@link OIDCScopeValue.Requirement#OPTIONAL
-   * optional}.
+   * Creates a new OpenID Connect scope value. The requirement is set to
+   * {@link OIDCScopeValue.Requirement#OPTIONAL optional}.
    *
    * @param value the scope value
    * @param claims the associated claims
@@ -150,13 +151,14 @@ public class OidcScopeValue extends Scope.Value {
 
   /**
    * Representation of the claim requirement within a scope.
-   *
+   * <p>
    * The {@code name} parameter holds the claim name. The {@code essential} tells whether the claim should be seen as
    * "essential". The {@code defaultIdTokenDelivery} and {@code defaultUserInfoDelivery} tells whether the default
    * delivery is via ID Token or UserInfo endpoint respectively. Note that both may be set to {@code true}, but both can
    * not be set to {@code false}.
+   * </p>
    */
-  public static record ClaimRequirement(String name, boolean essential,
+  public record ClaimRequirement(String name, boolean essential,
       boolean defaultIdTokenDelivery, boolean defaultUserInfoDelivery) {
 
     public ClaimRequirement {
