@@ -2,7 +2,8 @@
 
 # oidc-sweden-nimbus
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/se.oidc.nimbus/oidc-sweden-nimbus/badge.svg)](https://maven-badges.herokuapp.com/maven-central/se.oidc.nimbus/oidc-sweden-nimbus)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Maven Central](https://img.shields.io/maven-central/v/se.oidc.nimbus/oidc-sweden-nimbus.svg)](https://central.sonatype.com/artifact/se.oidc.nimbus/oidc-sweden-nimbus)
 
 Extensions for the Nimbus OAuth2/OpenID Connect SDK covering OIDC Sweden specifications.
 
