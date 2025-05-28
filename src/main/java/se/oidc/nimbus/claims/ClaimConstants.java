@@ -188,4 +188,8 @@ public class ClaimConstants {
    */
   public static final String AUTHENTICATION_PROVIDER_CLAIM_NAME = OIDC_SWEDEN_CLAIMS_PREFIX + "authnProvider";
 
+  // Hidden
+  private ClaimConstants() {
+  }
+
 }

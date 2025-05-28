@@ -157,6 +157,11 @@ public class OidcScopeValue extends Scope.Value {
    * delivery is via ID Token or UserInfo endpoint respectively. Note that both may be set to {@code true}, but both can
    * not be set to {@code false}.
    * </p>
+   *
+   * @param name the claim name
+   * @param essential whether the claim is "essential"
+   * @param defaultIdTokenDelivery whether the claim should be delivered in the ID token (by default)
+   * @param defaultUserInfoDelivery whether the claim should be delivered via the UserInfo endpoint (by default)
    */
   public record ClaimRequirement(String name, boolean essential,
       boolean defaultIdTokenDelivery, boolean defaultUserInfoDelivery) {
