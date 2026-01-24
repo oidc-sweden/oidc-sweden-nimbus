@@ -42,7 +42,7 @@ Be sure that your `JAVA_HOME` environment variable points to the `jdk17` folder 
 ### Check out sources
 
 ```
-git clone git clone https://github.com/oidc-sweden/oidc-sweden-nimbus.git
+git clone https://github.com/oidc-sweden/oidc-sweden-nimbus.git
 ```
 
 ### Build the library using Maven
@@ -54,4 +54,4 @@ git clone git clone https://github.com/oidc-sweden/oidc-sweden-nimbus.git
 
 ---
 
-Copyright &copy; 2023-2025, [OIDC Sweden](https://www.oidc.se). Licensed under version 2.0 of the [Apache License](http://www.apache.org/licenses/LICENSE-2.0).
+Copyright &copy; 2023-2026, [OIDC Sweden](https://www.oidc.se). Licensed under version 2.0 of the [Apache License](http://www.apache.org/licenses/LICENSE-2.0).
