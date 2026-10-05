@@ -76,6 +76,13 @@ public class ScopeConstants {
               ClaimRequirement.of(IDTokenClaimsSet.AUTH_TIME_CLAIM_NAME, true, true, false)
           });
 
+  /**
+   * The scope indicates for the OpenID Provider that the request in which the scope is included is a "signature
+   * approval request". The scope does not request any claims.
+   */
+  public static final OidcScopeValue SIGN_APPROVAL =
+      new OidcScopeValue("https://id.oidc.se/scope/signApproval", null);
+
   // Hidden constructor.
   private ScopeConstants() {
   }
