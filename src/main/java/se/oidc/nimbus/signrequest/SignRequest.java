@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 OIDC Sweden
+ * Copyright 2023-2026 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,15 +25,20 @@ import java.util.Objects;
 
 /**
  * Representation of the Signature Request Parameter as defined in section 3.1 of
- * <a href="https://www.oidc.se/specifications/oidc-signature-extension.html"> Signature Extension for OpenID
- * Connect</a>.
+ * <a href="https://www.oidc.se/specifications/oidc-signature-extension-1_1.html">Signature Extension for OpenID
+ * Connect, version 1.1</a>.
+ * <p>
+ * For a signature request (scope {@code https://id.oidc.se/scope/sign}) the {@code tbs_data} field must be present. For
+ * a signature approval request (scope {@code https://id.oidc.se/scope/signApproval} without the sign scope) it must not
+ * be present. Since the scope is not part of the parameter value, it is up to the caller to check this.
+ * </p>
  *
  * @author Martin Lindström
  */
 public class SignRequest {
 
   /**
-   * The data to be signed as a Base64-encoded string.
+   * The data to be signed as a Base64-encoded string. Is {@code null} for signature approval requests.
    */
   private final Base64 tbsData;
 
@@ -47,7 +52,17 @@ public class SignRequest {
   private final UserMessage signMessage;
 
   /**
-   * Constructor.
+   * Constructor for a signature approval request, i.e., a request without to-be-signed data.
+   *
+   * @param signMessage the "sign message", i.e., the user message to display during the signature approval
+   */
+  public SignRequest(final UserMessage signMessage) {
+    this.tbsData = null;
+    this.signMessage = Objects.requireNonNull(signMessage, "signMessage must not be null");
+  }
+
+  /**
+   * Constructor for a signature request.
    *
    * @param tbsData the to-be-signed data as a Base64-encoded string
    * @param signMessage the "sign message", i.e., the user message to display during the signature operation
@@ -58,7 +73,7 @@ public class SignRequest {
   }
 
   /**
-   * Constructor.
+   * Constructor for a signature request.
    *
    * @param tbsDataContents the raw to-be-signed data
    * @param signMessage the "sign message", i.e., the user message to display during the signature operation
@@ -71,7 +86,7 @@ public class SignRequest {
   /**
    * Gets the data to be signed as a Base64-encoded string.
    *
-   * @return the TBS-data
+   * @return the TBS-data, or {@code null} if not present (signature approval)
    */
   public Base64 getTbsData() {
     return this.tbsData;
@@ -80,10 +95,10 @@ public class SignRequest {
   /**
    * Gets the string contents of the TBS data.
    *
-   * @return the byte contents of the TBS data
+   * @return the byte contents of the TBS data, or {@code null} if not present (signature approval)
    */
   public byte[] getTbsDataContents() {
-    return this.tbsData.decode();
+    return this.tbsData != null ? this.tbsData.decode() : null;
   }
 
   /**
@@ -102,7 +117,9 @@ public class SignRequest {
    */
   public JSONObject toJSONObject() {
     final JSONObject o = new JSONObject();
-    o.put("tbs_data", this.tbsData.toString());
+    if (this.tbsData != null) {
+      o.put("tbs_data", this.tbsData.toString());
+    }
     o.put("sign_message", this.signMessage.toJSONObject());
     return o;
   }
@@ -117,15 +134,14 @@ public class SignRequest {
   public static SignRequest parse(final JSONObject jsonObject) throws ParseException {
 
     final String tbsData = jsonObject.getAsString("tbs_data");
-    if (tbsData == null) {
-      throw new ParseException("Missing required field tbs_data");
-    }
-    // Ensure that it is valid Base64 ...
-    try {
-      java.util.Base64.getDecoder().decode(tbsData);
-    }
-    catch (final Exception e) {
-      throw new ParseException("tbs_data does not contain a valid Base64 string", e);
+    if (tbsData != null) {
+      // Ensure that it is valid Base64 ...
+      try {
+        java.util.Base64.getDecoder().decode(tbsData);
+      }
+      catch (final Exception e) {
+        throw new ParseException("tbs_data does not contain a valid Base64 string", e);
+      }
     }
 
     final Object signMessageObject = jsonObject.get("sign_message");
@@ -142,7 +158,9 @@ public class SignRequest {
     else {
       throw new ParseException("Invalid type for sign_message");
     }
-    return new SignRequest(new Base64(tbsData), userMessage);
+    return tbsData != null
+        ? new SignRequest(new Base64(tbsData), userMessage)
+        : new SignRequest(userMessage);
   }
 
   /** {@inheritDoc} */
@@ -167,7 +185,8 @@ public class SignRequest {
   /** {@inheritDoc} */
   @Override
   public String toString() {
-    return "tbs_data=" + this.tbsData.toJSONString() + ", sign_message=[" + this.signMessage + "]";
+    return "tbs_data=" + (this.tbsData != null ? this.tbsData.toJSONString() : "not-set")
+        + ", sign_message=[" + this.signMessage + "]";
   }
 
 }

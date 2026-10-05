@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 OIDC Sweden
+ * Copyright 2023-2026 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,9 @@ import se.oidc.nimbus.claims.OidcScopeValue.ClaimRequirement;
 /**
  * Constants for the scopes defined in
  * <a href="https://www.oidc.se/specifications/swedish-oidc-claims-specification.html">Claims and Scopes
- * Specification for the Swedish OpenID Connect Profile</a>.
+ * Specification for the Swedish OpenID Connect Profile</a> and
+ * <a href="https://www.oidc.se/specifications/oidc-signature-extension.html">Signature Extension for OpenID
+ * Connect</a>.
  *
  * @author Martin Lindström
  */
@@ -66,8 +68,11 @@ public class ScopeConstants {
               ClaimRequirement.of(ClaimConstants.ORGANIZATION_NUMBER_CLAIM_NAME, false, false, true) });
 
   /**
+   * Defined in section 3.2.1 of the Signature Extension for OpenID Connect, version 1.1.
+   * <p>
    * The scope has two purposes; it indicates for the OpenID Provider that the request in which the scope is included is
    * a "signature request" and requests claims.
+   * </p>
    */
   public static final OidcScopeValue SIGN =
       new OidcScopeValue("https://id.oidc.se/scope/sign",
@@ -75,6 +80,16 @@ public class ScopeConstants {
               ClaimRequirement.of(ClaimConstants.USER_SIGNATURE_CLAIM_NAME, true, true, false),
               ClaimRequirement.of(IDTokenClaimsSet.AUTH_TIME_CLAIM_NAME, true, true, false)
           });
+
+  /**
+   * Defined in section 3.2.2 of the Signature Extension for OpenID Connect, version 1.1.
+   * <p>
+   * The scope indicates for the OpenID Provider that the request in which the scope is included is a "signature
+   * approval request". The scope does not request any claims.
+   * </p>
+   */
+  public static final OidcScopeValue SIGN_APPROVAL =
+      new OidcScopeValue("https://id.oidc.se/scope/signApproval", null);
 
   // Hidden constructor.
   private ScopeConstants() {

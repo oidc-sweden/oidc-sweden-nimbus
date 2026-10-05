@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 OIDC Sweden
+ * Copyright 2023-2026 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ package se.oidc.nimbus;
  */
 public final class LibraryVersion {
 
-  private static final int MAJOR = 0;
-  private static final int MINOR = 9;
-  private static final int PATCH = 3;
+  private static final int MAJOR = 1;
+  private static final int MINOR = 0;
+  private static final int PATCH = 0;
 
   /**
    * Global serialization value for classes.

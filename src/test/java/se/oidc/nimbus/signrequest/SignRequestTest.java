@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 OIDC Sweden
+ * Copyright 2023-2026 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,11 +69,30 @@ public class SignRequestTest {
   }
 
   @Test
+  public void testSignApproval() throws Exception {
+    final UserMessage um = new UserMessage(List.of(new UserMessage.Message("Approve signature")),
+        UserMessage.TEXT_MIME_TYPE);
+    final SignRequest signRequest = new SignRequest(um);
+
+    Assertions.assertNull(signRequest.getTbsData());
+    Assertions.assertNull(signRequest.getTbsDataContents());
+    Assertions.assertEquals(um, signRequest.getSignMessage());
+    Assertions.assertEquals("tbs_data=not-set, sign_message=[%s]".formatted(um), signRequest.toString());
+
+    final JSONObject json = signRequest.toJSONObject();
+    Assertions.assertFalse(json.containsKey("tbs_data"));
+
+    final SignRequest signRequest2 = SignRequest.parse(json);
+    Assertions.assertEquals(signRequest, signRequest2);
+    Assertions.assertEquals(signRequest.hashCode(), signRequest2.hashCode());
+  }
+
+  @Test
   public void testParseErrors() {
     final JSONObject json = new JSONObject();
     json.put("hello", "foo");
 
-    Assertions.assertEquals("Missing required field tbs_data",
+    Assertions.assertEquals("Missing required field sign_message",
         Assertions.assertThrows(ParseException.class, () -> SignRequest.parse(json)).getMessage());
 
     json.put("tbs_data", "This is not base64");
