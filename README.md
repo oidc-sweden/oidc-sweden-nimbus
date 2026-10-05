@@ -35,9 +35,9 @@ Include the following dependency in your project POM to use the extensions of `o
 
 ### Prerequisites
 
-[Git](https://help.github.com/set-up-git-redirect) and the [JDK17 build](https://www.oracle.com/technetwork/java/javase/downloads).
+[Git](https://help.github.com/set-up-git-redirect) and the [JDK21 build](https://www.oracle.com/technetwork/java/javase/downloads).
 
-Be sure that your `JAVA_HOME` environment variable points to the `jdk17` folder extracted from the JDK download.
+Be sure that your `JAVA_HOME` environment variable points to the `jdk21` folder extracted from the JDK download.
 
 ### Check out sources
 
