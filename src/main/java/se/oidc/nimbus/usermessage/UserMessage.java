@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 OIDC Sweden
+ * Copyright 2023-2026 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import com.nimbusds.langtag.LangTagException;
 import com.nimbusds.oauth2.sdk.ParseException;
 import net.minidev.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -166,7 +168,8 @@ public class UserMessage {
   }
 
   /**
-   * Returns the {@link JSONObject} for the user message type.
+   * Returns the {@link JSONObject} for the user message type. Each message is Base64-encoded (UTF-8) as required by
+   * the specification.
    *
    * @return a {@link JSONObject}
    */
@@ -175,13 +178,13 @@ public class UserMessage {
 
     final String defaultMessage = this.getDefaultMessage();
     if (defaultMessage != null) {
-      o.put(MESSAGE_PARAMETER_NAME, defaultMessage);
+      o.put(MESSAGE_PARAMETER_NAME, encodeMessage(defaultMessage));
     }
     for (final Message msg : this.messages) {
       if (msg.getLanguage() == null) {
         continue;
       }
-      o.put(MESSAGE_PARAMETER_NAME + "#" + msg.getLanguage().toString(), msg.getMessage());
+      o.put(MESSAGE_PARAMETER_NAME + "#" + msg.getLanguage().toString(), encodeMessage(msg.getMessage()));
     }
     if (this.mimeType != null) {
       o.put("mime_type", this.mimeType);
@@ -190,7 +193,8 @@ public class UserMessage {
   }
 
   /**
-   * Parses the supplied {@link JSONObject} into a {@link UserMessage} object.
+   * Parses the supplied {@link JSONObject} into a {@link UserMessage} object. The message values are expected to be
+   * Base64-encoded UTF-8 strings, and are decoded during parsing.
    *
    * @param jsonObject the JSON
    * @return a {@link UserMessage} object
@@ -206,7 +210,8 @@ public class UserMessage {
         if (!(defaultMessage instanceof String)) {
           throw new ParseException("Invalid user message object - Field message is expected to be a string");
         }
-        userMessage.addMessage(Message.parse(MESSAGE_PARAMETER_NAME, (String) defaultMessage));
+        userMessage.addMessage(
+            Message.parse(MESSAGE_PARAMETER_NAME, decodeMessage(MESSAGE_PARAMETER_NAME, (String) defaultMessage)));
       }
       for (final Map.Entry<String, Object> entry : jsonObject.entrySet()) {
         if (entry.getKey().startsWith(MESSAGE_PARAMETER_NAME + "#")) {
@@ -214,7 +219,8 @@ public class UserMessage {
             throw new ParseException(
                 "Invalid user message object - Field %s is expected to be a string".formatted(entry.getKey()));
           }
-          userMessage.addMessage(Message.parse(entry.getKey(), (String) entry.getValue()));
+          userMessage.addMessage(
+              Message.parse(entry.getKey(), decodeMessage(entry.getKey(), (String) entry.getValue())));
         }
       }
       if (userMessage.getMessages().isEmpty()) {
@@ -231,6 +237,34 @@ public class UserMessage {
     }
 
     return userMessage;
+  }
+
+  /**
+   * Base64-encodes the UTF-8 bytes of the supplied message.
+   *
+   * @param message the message
+   * @return the Base64-encoding
+   */
+  private static String encodeMessage(final String message) {
+    return Base64.getEncoder().encodeToString(message.getBytes(StandardCharsets.UTF_8));
+  }
+
+  /**
+   * Decodes a Base64-encoded UTF-8 message.
+   *
+   * @param fieldName the field name (for error reporting)
+   * @param encodedMessage the Base64-encoded message
+   * @return the decoded message
+   * @throws ParseException if the value is not valid Base64
+   */
+  private static String decodeMessage(final String fieldName, final String encodedMessage) throws ParseException {
+    try {
+      return new String(Base64.getDecoder().decode(encodedMessage), StandardCharsets.UTF_8);
+    }
+    catch (final IllegalArgumentException e) {
+      throw new ParseException(
+          "Invalid user message object - Field %s does not contain a valid Base64 string".formatted(fieldName), e);
+    }
   }
 
   /** {@inheritDoc} */

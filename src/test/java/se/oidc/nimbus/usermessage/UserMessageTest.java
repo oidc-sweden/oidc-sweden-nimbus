@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 OIDC Sweden
+ * Copyright 2023-2026 OIDC Sweden
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +73,24 @@ public class UserMessageTest {
   }
 
   @Test
+  public void testBase64Encoding() throws Exception {
+    final UserMessage userMessage = new UserMessage(List.of(
+        new UserMessage.Message("I hereby agree to the contract displayed", "en"),
+        new UserMessage.Message("Jag samtycker härmed till kontraktet som visats", "sv")),
+        UserMessage.TEXT_MIME_TYPE);
+
+    // Values from the example in section 3.1 of the OIDC Sweden Signature Extension specification
+    final JSONObject json = userMessage.toJSONObject();
+    Assertions.assertEquals("SSBoZXJlYnkgYWdyZWUgdG8gdGhlIGNvbnRyYWN0IGRpc3BsYXllZA==", json.get("message#en"));
+    Assertions.assertEquals("SmFnIHNhbXR5Y2tlciBow6RybWVkIHRpbGwga29udHJha3RldCBzb20gdmlzYXRz",
+        json.get("message#sv"));
+
+    final UserMessage parsed = UserMessage.parse(json);
+    Assertions.assertEquals("I hereby agree to the contract displayed", parsed.getMessage("en"));
+    Assertions.assertEquals("Jag samtycker härmed till kontraktet som visats", parsed.getMessage("sv"));
+  }
+
+  @Test
   public void testDuplicateMessages() {
     final UserMessage userMessage = new UserMessage();
     userMessage.addMessage(new UserMessage.Message("Default message"));
@@ -120,6 +138,12 @@ public class UserMessageTest {
     json1.put("message", 42);
     Assertions.assertEquals("Invalid user message object - Field message is expected to be a string",
         Assertions.assertThrows(ParseException.class, () -> UserMessage.parse(json1)).getMessage());
+
+    final JSONObject json2 = new JSONObject();
+    json2.put("message#en", "Not Base64!");
+    Assertions.assertEquals(
+        "Invalid user message object - Field message#en does not contain a valid Base64 string",
+        Assertions.assertThrows(ParseException.class, () -> UserMessage.parse(json2)).getMessage());
   }
 
 }
