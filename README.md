@@ -13,6 +13,8 @@ The `oidc-sweden-nimbus` repository contains Java implementations of the extensi
 [OIDC Sweden Specifications](https://www.oidc.se/specifications/). The library extends the 
 [Nimbus OAuth2/OpenID Connect SDK](https://connect2id.com/products/nimbus-oauth-openid-connect-sdk).
 
+* [Release notes](https://www.oidc.se/oidc-sweden-nimbus/release-notes.md)
+
 ## API Documentation
 
 Javadoc for the library is published under https://www.oidc.se/oidc-sweden-nimbus/apidoc.

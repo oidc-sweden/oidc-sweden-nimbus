@@ -7,7 +7,7 @@
   <groupId>se.oidc.nimbus</groupId>
   <artifactId>oidc-sweden-nimbus</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 
   <name>OIDC Sweden :: Nimbus SDK extensions</name>
   <description>Nimbus SDK extension library for OIDC Sweden</description>
@@ -240,6 +240,37 @@
         </executions>
       </plugin>
 
+      <!--
+        Unpacks the element-list from the nimbus-jose-jwt Javadoc jar so that the Javadoc build
+        does not depend on javadoc.io having published the version (see offlineLinks below).
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.11.0</version>
+        <executions>
+          <execution>
+            <id>unpack-javadoc-element-lists</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.nimbusds</groupId>
+                  <artifactId>nimbus-jose-jwt</artifactId>
+                  <version>${nimbus-jose-jwt.version}</version>
+                  <classifier>javadoc</classifier>
+                  <includes>element-list</includes>
+                  <outputDirectory>${project.build.directory}/javadoc-links/nimbus-jose-jwt</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -247,8 +278,13 @@
         <configuration>
           <doctitle>Nimbus extensions for OIDC Sweden - ${project.version}</doctitle>
           <windowtitle>Nimbus extensions for OIDC Sweden - ${project.version}</windowtitle>
+          <offlineLinks>
+            <offlineLink>
+              <url>https://javadoc.io/doc/com.nimbusds/nimbus-jose-jwt/${nimbus-jose-jwt.version}/</url>
+              <location>${project.build.directory}/javadoc-links/nimbus-jose-jwt</location>
+            </offlineLink>
+          </offlineLinks>
           <links>
-            <link>https://javadoc.io/doc/com.nimbusds/nimbus-jose-jwt/${nimbus-jose-jwt.version}</link>
             <link>https://javadoc.io/doc/com.nimbusds/oauth2-oidc-sdk/${oauth2-oidc-sdk.version}</link>
           </links>
           <detectJavaApiLink>true</detectJavaApiLink>
