@@ -25,8 +25,8 @@ import java.util.Objects;
 
 /**
  * Representation of the Signature Request Parameter as defined in section 3.1 of
- * <a href="https://www.oidc.se/specifications/oidc-signature-extension.html"> Signature Extension for OpenID
- * Connect</a>.
+ * <a href="https://www.oidc.se/specifications/oidc-signature-extension-1_1.html">Signature Extension for OpenID
+ * Connect, version 1.1</a>.
  * <p>
  * For a signature request (scope {@code https://id.oidc.se/scope/sign}) the {@code tbs_data} field must be present. For
  * a signature approval request (scope {@code https://id.oidc.se/scope/signApproval} without the sign scope) it must not
