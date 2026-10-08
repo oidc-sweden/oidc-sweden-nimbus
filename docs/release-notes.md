@@ -6,7 +6,7 @@
 
 ## Version 1.1.0
 
-**Date:** _not yet released_
+**Date:** 2026-10-08
 
 - Support for signed signature request JWTs according to version 1.2 of the Signature Extension specification.
 - Fixed: Comparing two user messages no longer depends on the order of the messages.
