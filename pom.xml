@@ -7,7 +7,7 @@
   <groupId>se.oidc.nimbus</groupId>
   <artifactId>oidc-sweden-nimbus</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>1.1.0-SNAPSHOT</version>
 
   <name>OIDC Sweden :: Nimbus SDK extensions</name>
   <description>Nimbus SDK extension library for OIDC Sweden</description>

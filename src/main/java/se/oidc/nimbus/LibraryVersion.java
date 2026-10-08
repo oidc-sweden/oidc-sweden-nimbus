@@ -23,7 +23,7 @@ package se.oidc.nimbus;
 public final class LibraryVersion {
 
   private static final int MAJOR = 1;
-  private static final int MINOR = 0;
+  private static final int MINOR = 1;
   private static final int PATCH = 0;
 
   /**

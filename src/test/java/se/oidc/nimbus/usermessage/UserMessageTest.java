@@ -17,6 +17,7 @@ package se.oidc.nimbus.usermessage;
 
 import com.nimbusds.langtag.LangTag;
 import com.nimbusds.oauth2.sdk.ParseException;
+import com.nimbusds.oauth2.sdk.util.JSONObjectUtils;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -144,6 +145,33 @@ public class UserMessageTest {
     Assertions.assertEquals(
         "Invalid user message object - Field message#en does not contain a valid Base64 string",
         Assertions.assertThrows(ParseException.class, () -> UserMessage.parse(json2)).getMessage());
+  }
+
+  @Test
+  public void testEqualsIgnoresMessageOrder() throws Exception {
+    final UserMessage um1 = new UserMessage(List.of(
+        new UserMessage.Message("Hej", "sv"),
+        new UserMessage.Message("Hello", "en"),
+        new UserMessage.Message("Default")),
+        UserMessage.TEXT_MIME_TYPE);
+    final UserMessage um2 = new UserMessage(List.of(
+        new UserMessage.Message("Hello", "en"),
+        new UserMessage.Message("Default"),
+        new UserMessage.Message("Hej", "sv")),
+        UserMessage.TEXT_MIME_TYPE);
+    Assertions.assertEquals(um1, um2);
+    Assertions.assertEquals(um1.hashCode(), um2.hashCode());
+    Assertions.assertEquals(um1, UserMessage.parse(JSONObjectUtils.parse(um1.toJSONObject().toJSONString())));
+
+    final UserMessage otherMimeType = new UserMessage(um1.getMessages(), UserMessage.MARKDOWN_MIME_TYPE);
+    Assertions.assertNotEquals(um1, otherMimeType);
+
+    final UserMessage otherText = new UserMessage(List.of(
+        new UserMessage.Message("Hej", "sv"),
+        new UserMessage.Message("Hello!", "en"),
+        new UserMessage.Message("Default")),
+        UserMessage.TEXT_MIME_TYPE);
+    Assertions.assertNotEquals(um1, otherText);
   }
 
 }
