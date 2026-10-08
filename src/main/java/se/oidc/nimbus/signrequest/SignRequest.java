@@ -25,12 +25,16 @@ import java.util.Objects;
 
 /**
  * Representation of the Signature Request Parameter as defined in section 3.1 of
- * <a href="https://www.oidc.se/specifications/oidc-signature-extension-1_1.html">Signature Extension for OpenID
- * Connect, version 1.1</a>.
+ * <a href="https://www.oidc.se/specifications/oidc-signature-extension-1_2.html">Signature Extension for OpenID
+ * Connect, version 1.2</a>.
  * <p>
  * For a signature request (scope {@code https://id.oidc.se/scope/sign}) the {@code tbs_data} field must be present. For
  * a signature approval request (scope {@code https://id.oidc.se/scope/signApproval} without the sign scope) it must not
  * be present. Since the scope is not part of the parameter value, it is up to the caller to check this.
+ * </p>
+ * <p>
+ * When the parameter is passed as a custom request parameter, its value is a signed JWT. See
+ * {@link SignRequestClaimsSet}.
  * </p>
  *
  * @author Martin Lindström

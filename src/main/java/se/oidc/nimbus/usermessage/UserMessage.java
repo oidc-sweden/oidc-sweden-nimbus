@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -267,10 +268,22 @@ public class UserMessage {
     }
   }
 
+  /**
+   * Returns the messages as a map where the language tag is the key ({@code null} for the default message). Used by
+   * {@link #equals(Object)} and {@link #hashCode()} so that the order of the messages does not matter.
+   *
+   * @return a map of language tags and messages
+   */
+  private Map<String, String> getMessagesMap() {
+    final Map<String, String> map = new HashMap<>();
+    this.messages.forEach(m -> map.put(m.getLanguage() != null ? m.getLanguage().toString() : null, m.getMessage()));
+    return map;
+  }
+
   /** {@inheritDoc} */
   @Override
   public int hashCode() {
-    return Objects.hash(this.toString());
+    return Objects.hash(this.getMessagesMap(), this.mimeType);
   }
 
   /** {@inheritDoc} */
@@ -283,7 +296,8 @@ public class UserMessage {
       return false;
     }
     final UserMessage other = (UserMessage) obj;
-    return Objects.equals(this.toString(), other.toString());
+    return Objects.equals(this.mimeType, other.mimeType)
+        && Objects.equals(this.getMessagesMap(), other.getMessagesMap());
   }
 
   /** {@inheritDoc} */
